@@ -42,16 +42,10 @@ const logout = async (req, res, next) => {
 const refreshToken = async (req, res, next) => {
     try {
         const token = req.get(constants.AUTHORIZATION);
-        const { currentUser } = req;
-
-        await OAuth.deleteOne({ refreshToken: token });
 
         const tokens = jwtService.generateTokens();
 
-        await OAuth.create({
-            ...tokens,
-            user: currentUser._id
-        });
+        await OAuth.findOneAndUpdate({ refreshToken: token }, { ...tokens });
 
         res.status(statusEnum.NO_CONTENT);
     } catch (err) {
